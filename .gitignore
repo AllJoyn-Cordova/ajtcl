@@ -30,6 +30,7 @@ latex
 build
 ajlite.nvram
 libajtcl.so
+libajtcl.dylib
 ajtcl.dll
 whitespace.db
 *.pyc
@@ -47,3 +48,4 @@ test/nvramdump
 test/sessionslite
 test/sigtest
 alljoyn.py
+alljoyn_*_wrap.c

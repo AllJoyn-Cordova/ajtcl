@@ -62,12 +62,8 @@
 extern uint8_t dbgCONFIGUREME;
 extern uint8_t dbgINIT;
 extern uint8_t dbgNET;
-extern uint8_t dbgTARGET_CRYPTO;
-extern uint8_t dbgTARGET_NVRAM;
-extern uint8_t dbgTARGET_SERIAL;
 extern uint8_t dbgTARGET_TIMER;
 extern uint8_t dbgTARGET_UTIL;
-
 #endif
 
 #define AJ_ASSERT(x) assert(x)

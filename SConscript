@@ -13,6 +13,8 @@
 #    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import os
+import sys
+import os.path
 import shutil
 import platform
 import distutils.sysconfig
@@ -37,11 +39,11 @@ vars.Add(EnumVariable('WS', 'Whitespace Policy Checker', 'check', allowed_values
 vars.Add(EnumVariable('FORCE32', 'Force building 32 bit on 64 bit architecture', 'false', allowed_values=('false', 'true')))
 vars.Add(EnumVariable('NO_AUTH', 'Compile in authentication mechanism\'s to the code base', 'no', allowed_values=('no', 'yes')))
 vars.Add(EnumVariable('AJWSL', 'Compile driver for the QCA4004 for a specific platform', 'off', allowed_values=('due', 'stm32', 'off')))
+vars.Add(EnumVariable('LANG', 'Target language bindings to generate', 'python', allowed_values=('python', 'java', 'csharp')))
 vars.Add(PathVariable('ATMEL_DIR', 'Directory for ATMEL source code', os.environ.get('ATMEL_DIR'), PathVariable.PathIsDir))
 vars.Add(PathVariable('FREE_RTOS_DIR','Directory to FreeRTOS source code', os.environ.get('FREE_RTOS_DIR'), PathVariable.PathIsDir))
 vars.Add(PathVariable('ARM_TOOLCHAIN_DIR', 'Path to the GNU ARM toolchain bin folder', os.environ.get('ARM_TOOLCHAIN_DIR'), PathVariable.PathIsDir))
 vars.Add(PathVariable('STM_SRC_DIR', 'Path to the source code for the STM32 microcontroller', os.environ.get('STM_SRC_DIR'), PathVariable.PathIsDir))
-vars.Add(ListVariable('LANG', 'Target language bindings to generate', None, ['python'] ))
 
 if default_msvc_version:
     vars.Add(EnumVariable('MSVC_VERSION', 'MSVC compiler version - Windows', default_msvc_version, allowed_values=('8.0', '9.0', '10.0', '11.0', '11.0Exp', '12.0', '12.0Exp')))
@@ -223,7 +225,7 @@ elif env['TARG'] == 'bsp':
     # Add platform independent source files
     rtos_src = [Glob('RTOS/*.c') + Glob('RTOS/FreeRTOS/*.c') + Glob(env['FREE_RTOS_DIR'] + '/Source/*.c') +
                 [env['FREE_RTOS_DIR'] + '/Source/portable/GCC/ARM_CM3/port.c']]
-    
+
     if env['AJWSL'] == 'due':
         rtos_src += [env['FREE_RTOS_DIR'] + '/Source/portable/MemMang/heap_4.c']
         
@@ -351,6 +353,8 @@ elif env['TARG'] in [ 'darwin' ]:
         env.Append(LINKFLAGS=os.environ['CROSS_LINKFLAGS'].split())
 
     env['libs'] = ['crypto', 'pthread']
+    env['FRAMEWORKS'] = ['Security']
+
     env.Append(CFLAGS=['-Wall',
                        '-pipe',
                        '-static',
@@ -412,15 +416,24 @@ if env['TARG'] in [ 'win32', 'linux', 'darwin' ]:
     env['aj_shobj'] = env.SharedObject(srcs)
 
     # Build language bindings
-    for lang in env.get('LANG',[]):
-        swig_env = env.Clone()
-        swig_env.Append(SWIGFLAGS=['-'+lang])
-        swig_env.Append(SWIGPATH=['inc/','target/'+env['TARG']])
-        if lang == 'python':
-            swig_env.Append(CPPPATH=[distutils.sysconfig.get_python_inc()])
-            swig_env.Replace(SHLIBPREFIX="")
-            ret = swig_env.SharedLibrary('_alljoyn', ['swig/alljoyn.i', srcs])
-            swig_env.Install('./', 'swig/alljoyn.py')
+    for lang in env['LANG']:
+      lang = env['LANG']
+      swig_env = env.Clone()
+      swig_env.Append(SWIGFLAGS=['-'+lang])
+      swig_env.Append(SWIGPATH=['inc/','target/'+env['TARG']])
+      swig_env.Append(SWIGOUTDIR='swig/'+lang)
+      swig_env.Replace(SWIGCFILESUFFIX='_'+lang+'_wrap$CFILESUFFIX')
+
+      if lang == 'python':
+        swig_env.AppendUnique(CPPPATH=[os.path.join(sys.prefix, 'include', 'python%d.%d'%(sys.version_info[0],sys.version_info[1]))])
+        swig_env.AppendUnique(LIBPATH=[os.path.join(sys.prefix, 'lib')])
+        swig_env.AppendUnique(LIBS="libpython2.7")
+        swig_env.Replace(SHLIBPREFIX="")
+        swig_env.Replace(SHLIBSUFFIX=".so")
+      elif lang == 'java':
+        print "Working on java."
+
+      ret = swig_env.SharedLibrary('swig/'+lang+'/_alljoyn', ['swig/alljoyn.i', env.SharedObject(srcs)])
 
 if env['AJWSL'] == 'due':
     env['aj_obj'] = env.Object(env['aj_srcs'] + env['aj_sw_crypto'] + env['aj_malloc'] + env['aj_crypto_ecc'] + env['aj_external_sha2'])
