@@ -22,7 +22,7 @@
  * prior to first inclusion of aj_debug.h
  */
 #define AJ_MODULE DISCO
-
+#include <stdlib.h>
 #include "aj_target.h"
 #include "aj_status.h"
 #include "aj_util.h"

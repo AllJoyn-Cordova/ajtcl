@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <string.h>
@@ -55,7 +56,7 @@
 #endif
 
 #define AJ_Printf(fmat, ...) \
-    do { printf(fmat, ## __VA_ARGS__); } while (0)
+    do { printf(fmat, ## __VA_ARGS__); fflush(stdout); } while (0)
 
 #ifndef NDEBUG
 extern uint8_t dbgCONFIGUREME;
@@ -78,7 +79,7 @@ extern uint8_t dbgTARGET_UTIL;
 
 #define AJ_CreateNewGUID AJ_RandBytes
 
-#define AJ_GetDebugTime(x) AJ_ERR_RESOURCES
+#define AJ_GetDebugTime(x) _AJ_GetDebugTime(x)
 
 #define AJ_EXPORT
 

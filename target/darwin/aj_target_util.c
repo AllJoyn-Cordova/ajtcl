@@ -71,6 +71,13 @@ uint32_t AJ_GetElapsedTime(AJ_Time* timer, uint8_t cumulative)
     }
     return elapsed;
 }
+
+AJ_Status AJ_GetDebugTime(AJ_Time* timer)
+{
+    return AJ_ERR_UNKNOWN;
+}
+
+
 void AJ_InitTimer(AJ_Time* timer)
 {
     struct timespec now;
