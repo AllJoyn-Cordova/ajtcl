@@ -147,7 +147,7 @@ typedef const char* const* AJ_InterfaceDescription;
  * objIdx index of the object in its registered object list
  * ifaceIdx index of the interface in the object description for this object index.
  */
-#define AJ_DESC_ID_FROM_INTERFACE_INDEX(objIdx, ifaceIdx) (AJ_DESC_ID_FROM_OBJ_INDEX(objIdx) | (((uint32_t)(ifaceIdx) & 0xFF) + 0x1)) << 16))
+#define AJ_DESC_ID_FROM_INTERFACE_INDEX(objIdx, ifaceIdx) ((AJ_DESC_ID_FROM_OBJ_INDEX(objIdx) | (((uint32_t)(ifaceIdx) & 0xFF) + 0x1)) << 16)
 
 /* end of helper macros */
 
@@ -317,6 +317,57 @@ const AJ_Object* AJ_InitObjectIterator(AJ_ObjectIterator* iter, uint8_t inFlags,
  */
 AJ_EXPORT
 const AJ_Object* AJ_NextObject(AJ_ObjectIterator* iter);
+
+/*
+ * Management functions for interfaces
+ */
+/**
+ * Create an interface list that can be attached to an object
+ */
+AJ_EXPORT
+AJ_InterfaceDescription* AJ_InterfacesCreate();
+
+/**
+ * Add interfaces to a list
+ */
+AJ_EXPORT
+AJ_InterfaceDescription* AJ_InterfacesAdd(AJ_InterfaceDescription *, char**);
+
+/**
+ * Delete a interface list recursively
+ */
+AJ_EXPORT
+AJ_Status AJ_InterfacesDelete(AJ_InterfaceDescription *);
+
+/**
+ * Create an interface that can be added to a list
+ */
+AJ_EXPORT
+char ** AJ_InterfaceDescriptionCreate(char *);
+
+/**
+ * Add an entry to the interface
+ */
+AJ_EXPORT
+char ** AJ_InterfaceDescriptionAdd(char **, char *);
+
+/**
+ * Delete a interface
+ */
+AJ_EXPORT
+AJ_Status AJ_InterfaceDescriptionDelete(char**);
+
+/**
+ * Create object list
+ */
+AJ_EXPORT
+AJ_Object* AJ_ObjectsCreate();
+
+/**
+ * Add objects to the list
+ */
+AJ_EXPORT
+AJ_Object* AJ_ObjectsAdd(AJ_Object *, AJ_Object);
 
 /**
  * This function checks that a message ifrom a remote peer is valid and correct and returns the

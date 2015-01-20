@@ -1,0 +1,7 @@
+language: c
+install:
+  - "sudo apt-get install build-essential scons python libssl-dev swig python-dev"
+script:
+  - "scons LANG=python WS=off"
+  - "python2 -c 'import alljoyn'" 
+  - "python2 test.py & sleep 6 && exit 0" 
