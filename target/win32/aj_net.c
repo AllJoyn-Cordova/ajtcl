@@ -23,14 +23,13 @@
  */
 #define AJ_MODULE NET
 
-#include <Winsock2.h>
+#include <WinSock2.h>
 #include <Mswsock.h>
-
 #include <ws2tcpip.h>
-#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "Ws2_32")
 
 #include <iphlpapi.h>
-#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "iphlpapi")
 
 #include <assert.h>
 #include <stdio.h>

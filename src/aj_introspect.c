@@ -1639,22 +1639,22 @@ AJ_Status AJ_InterfacesDelete(AJ_InterfaceDescription *array)
 
 char ** AJ_InterfaceDescriptionCreate(char *interfaceName)
 {
-    char **interface;
-    interface = AJ_Malloc(sizeof(char*) * 2);
-    if (!interface)
+    char **iface;
+    iface = AJ_Malloc(sizeof(char*) * 2);
+    if (!iface)
         return NULL;
 
-    interface[0] = AJ_Malloc(strlen(interfaceName) + 1);
-    if (!interface[0]) {
-        AJ_Free(interface);
+    iface[0] = AJ_Malloc(strlen(interfaceName) + 1);
+    if (!iface[0]) {
+        AJ_Free(iface);
         return NULL;
     }
 
-    interface[1] = NULL;
+    iface[1] = NULL;
 
-    strcpy(interface[0], interfaceName);
+    strcpy(iface[0], interfaceName);
 
-    return interface;
+    return iface;
 }
 
 char ** AJ_InterfaceDescriptionAdd(char **interfaceDescription, char *description)

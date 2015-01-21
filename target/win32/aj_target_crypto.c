@@ -28,6 +28,7 @@
 #include "aj_debug.h"
 
 #include <windows.h>
+#include "Wincrypt.h"
 
 /**
  * Turn on per-module debug printing by setting this variable to non-zero value

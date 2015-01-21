@@ -81,7 +81,7 @@ if restrict != '':
         print 'Invalid value for DEBUG_RESTRICT'
         Exit(0)
 
-if env.get('LANG') != 'none' and not env.WhereIs('swig'):
+if env.get('LANG') != 'none' and not env.WhereIs('swig.exe'):
     print('SWIG missing in path')
     Exit(1)
 
@@ -90,10 +90,10 @@ if env.get('LANG') != 'none' and not env.WhereIs('swig'):
 # In case of target platforms, the compilation/linking does not take place
 # using SCons files.
 if env['TARG'] == 'win32':
-    env['libs'] = ['wsock32', 'advapi32']
+    env['libs'] = ['WS2_32', 'advapi32']
     env.Append(CFLAGS=['/J', '/W3'])
-    env.Append(CPPDEFINES=['_CRT_SECURE_NO_WARNINGS'])
-    env.Append(LINKFLAGS=['/NODEFAULTLIB:libcmt.lib'])
+    env.Append(CPPDEFINES=['_CRT_SECURE_NO_WARNINGS', 'WIN32_LEAN_AND_MEAN', '_WINSOCK_DEPRECATED_NO_WARNINGS'])
+    env.Append(LINKFLAGS=['/NODEFAULTLIB:libcmt.lib', '/LIBPATH:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\\x86'])
     if env['VARIANT'] == 'debug':
         # With a modern Microsoft compiler it is typical to use a pdb file i.e. the /Zi
         # or/ZI CCPDBFLAGS.  However in SCons a pdb file is created for each .obj file.
@@ -110,7 +110,7 @@ if env['TARG'] == 'win32':
         env.Append(CFLAGS=['/MD', '/Gy', '/O1', '/GF'])
         env.Append(LINKFLAGS=['/opt:ref'])
     # Include paths
-    env['includes'] = [ os.getcwd() + '/inc', os.getcwd() + '/target/${TARG}']
+    env['includes'] = ['\Program Files (x86)\Windows Kits\8.1\Include\shared', '\Program Files (x86)\Windows Kits\8.1\Include\um']
     # Target-specific headers and sources
     env['aj_targ_headers'] = [Glob('target/' + env['TARG'] + '/*.h')]
     env['aj_targ_srcs'] = [Glob('target/' + env['TARG'] + '/*.c')]
@@ -374,7 +374,7 @@ elif env['TARG'] in [ 'darwin' ]:
         env.Append(LINKFLAGS='-m32')
 
 # Include paths
-env['includes'] = [ os.getcwd() + '/inc', os.getcwd() + '/target/${TARG}', os.getcwd() + '/crypto/ecc', os.getcwd() + '/external/sha2']
+env['includes'] += [ os.getcwd() + '/inc', os.getcwd() + '/target/${TARG}', os.getcwd() + '/crypto/ecc', os.getcwd() + '/external/sha2']
 
 # Target-specific headers and sources
 env['aj_targ_headers'] = [Glob('target/' + env['TARG'] + '/*.h')]
