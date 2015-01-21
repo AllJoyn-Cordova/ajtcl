@@ -81,7 +81,7 @@ if restrict != '':
         print 'Invalid value for DEBUG_RESTRICT'
         Exit(0)
 
-if env.get('LANG') and not env.WhereIs('swig'):
+if env.get('LANG') != 'none' and not env.WhereIs('swig'):
     print('SWIG missing in path')
     Exit(1)
 
