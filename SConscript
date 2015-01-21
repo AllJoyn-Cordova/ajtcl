@@ -39,7 +39,7 @@ vars.Add(EnumVariable('WS', 'Whitespace Policy Checker', 'check', allowed_values
 vars.Add(EnumVariable('FORCE32', 'Force building 32 bit on 64 bit architecture', 'false', allowed_values=('false', 'true')))
 vars.Add(EnumVariable('NO_AUTH', 'Compile in authentication mechanism\'s to the code base', 'no', allowed_values=('no', 'yes')))
 vars.Add(EnumVariable('AJWSL', 'Compile driver for the QCA4004 for a specific platform', 'off', allowed_values=('due', 'stm32', 'off')))
-vars.Add(EnumVariable('LANG', 'Target language bindings to generate', 'python', allowed_values=('python', 'java', 'csharp')))
+vars.Add(EnumVariable('LANG', 'Target language bindings to generate', 'none', allowed_values=('none', 'python', 'java', 'csharp')))
 vars.Add(PathVariable('ATMEL_DIR', 'Directory for ATMEL source code', os.environ.get('ATMEL_DIR'), PathVariable.PathIsDir))
 vars.Add(PathVariable('FREE_RTOS_DIR','Directory to FreeRTOS source code', os.environ.get('FREE_RTOS_DIR'), PathVariable.PathIsDir))
 vars.Add(PathVariable('ARM_TOOLCHAIN_DIR', 'Path to the GNU ARM toolchain bin folder', os.environ.get('ARM_TOOLCHAIN_DIR'), PathVariable.PathIsDir))
@@ -431,9 +431,16 @@ if env['TARG'] in [ 'win32', 'linux', 'darwin' ]:
         swig_env.Replace(SHLIBPREFIX="")
         swig_env.Replace(SHLIBSUFFIX=".so")
       elif lang == 'java':
+        swig_env.AppendUnique(CPPPATH=[os.path.join(os.environ.get('JAVA_HOME'), 'include')])
+        swig_env.AppendUnique(CPPPATH=[os.path.join(os.environ.get('JAVA_HOME'), 'include', default_target)])
+        swig_env.Replace(SHLIBPREFIX="")
+        swig_env.Replace(SHLIBSUFFIX=".so")
         print "Working on java."
+      elif lang == 'csharp':
+        print "Working on C#"
 
-      ret = swig_env.SharedLibrary('swig/'+lang+'/_alljoyn', ['swig/alljoyn.i', env.SharedObject(srcs)])
+      if lang != 'none':
+        ret = swig_env.SharedLibrary('swig/'+lang+'/_alljoyn', ['swig/alljoyn.i', env.SharedObject(srcs)])
 
 if env['AJWSL'] == 'due':
     env['aj_obj'] = env.Object(env['aj_srcs'] + env['aj_sw_crypto'] + env['aj_malloc'] + env['aj_crypto_ecc'] + env['aj_external_sha2'])
