@@ -81,10 +81,9 @@ if restrict != '':
         print 'Invalid value for DEBUG_RESTRICT'
         Exit(0)
 
-if env.get('LANG') != 'none' and not env.WhereIs('swig.exe'):
+if env.get('LANG') != 'none' and not env.WhereIs('swig'):
     print('SWIG missing in path')
     Exit(1)
-
 
 # Define compile/link options only for win32/linux.
 # In case of target platforms, the compilation/linking does not take place
@@ -352,6 +351,7 @@ elif env['TARG'] in [ 'darwin' ]:
     if os.environ.has_key('CROSS_LINKFLAGS'):
         env.Append(LINKFLAGS=os.environ['CROSS_LINKFLAGS'].split())
 
+    env['includes'] = []
     env['libs'] = ['crypto', 'pthread']
     env['FRAMEWORKS'] = ['Security']
 
@@ -373,6 +373,14 @@ elif env['TARG'] in [ 'darwin' ]:
         env.Append(CFLAGS='-m32')
         env.Append(LINKFLAGS='-m32')
 
+elif env['TARG'] in [ 'android' ]:
+    # env.Replace(CC = '/opt/android-ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc')
+    # env.Replace(CXX = '/opt/android-ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-g++')
+    # env.Replace(LINK = '/opt/android-ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ld')
+    # env.Replace(AR = '/opt/android-ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc')
+    env['includes'] = []
+    env['libs'] = []
+
 # Include paths
 env['includes'] += [ os.getcwd() + '/inc', os.getcwd() + '/target/${TARG}', os.getcwd() + '/crypto/ecc', os.getcwd() + '/external/sha2']
 
@@ -391,7 +399,7 @@ env['aj_external_sha2'] = [Glob('external/sha2/*.c')]
 wsl = [Glob('WSL/*.c')]
 
 # Set-up the environment for Win/Linux
-if env['TARG'] in [ 'win32', 'linux', 'darwin' ]:
+if env['TARG'] in [ 'win32', 'linux', 'darwin', 'android' ]:
     # To compile, sources need access to include files
     env.Append(CPPPATH = [env['includes']])
 
@@ -410,10 +418,11 @@ if env['TARG'] in [ 'win32', 'linux', 'darwin' ]:
     if env['TARG'] == 'win32':
         srcs += env['aj_sw_crypto']
 
-    env.SharedLibrary('ajtcl', srcs)
-    env.StaticLibrary('ajtcl_st', srcs)
-    env['aj_obj'] = env.StaticObject(srcs)
-    env['aj_shobj'] = env.SharedObject(srcs)
+    if env['TARG'] not in [ 'android' ]:
+        env.SharedLibrary('ajtcl', srcs)
+        env.StaticLibrary('ajtcl_st', srcs)
+        env['aj_obj'] = env.StaticObject(srcs)
+        env['aj_shobj'] = env.SharedObject(srcs)
 
     # Build language bindings
     for lang in env['LANG']:
@@ -431,11 +440,15 @@ if env['TARG'] in [ 'win32', 'linux', 'darwin' ]:
         swig_env.Replace(SHLIBPREFIX="")
         swig_env.Replace(SHLIBSUFFIX=".so")
       elif lang == 'java':
+        print "%s" % os.environ.get('JAVA_HOME')
+        if os.environ.get('JAVA_HOME') is None:
+            print "You must set JAVA_HOME to generate java language bindings."
+            Exit(1)
+        swig_env.Append(SWIGFLAGS=['-package', 'alljoyn'])
         swig_env.AppendUnique(CPPPATH=[os.path.join(os.environ.get('JAVA_HOME'), 'include')])
         swig_env.AppendUnique(CPPPATH=[os.path.join(os.environ.get('JAVA_HOME'), 'include', default_target)])
         swig_env.Replace(SHLIBPREFIX="")
         swig_env.Replace(SHLIBSUFFIX=".so")
-        print "Working on java."
       elif lang == 'csharp':
         print "Working on C#"
 

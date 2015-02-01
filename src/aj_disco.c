@@ -955,6 +955,8 @@ AJ_Status AJ_Discover(const char* prefix, AJ_Service* service, uint32_t timeout)
     if (status != AJ_OK) {
         AJ_InfoPrintf(("AJ_Discover(): status=%s\n", AJ_StatusText(status)));
         return status;
+    } else {
+        AJ_InfoPrintf(("AJ_Discover(): status=%s\n", AJ_StatusText(status)));
     }
 
     /*
