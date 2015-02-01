@@ -48,4 +48,3 @@ test/nvramdump
 test/sessionslite
 test/sigtest
 alljoyn.py
-alljoyn_*_wrap.c
