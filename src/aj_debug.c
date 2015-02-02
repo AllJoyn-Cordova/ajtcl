@@ -133,8 +133,8 @@ int _AJ_DbgHeader(AJ_DebugLevel level, const char* file, int line)
 }
 
 
-AJ_DebugLevel AJ_DbgLevel = AJ_DEBUG_INFO;
-uint8_t dbgALL = 0;
+AJ_DebugLevel AJ_DbgLevel = AJ_DEBUG_ALL;
+uint8_t dbgALL = 1;
 
 #endif
 

@@ -180,6 +180,7 @@ extern "C" {
         AJ_Printf msg; \
     } while (0)
 
+
 #ifndef NDEBUG
 
 /**
@@ -229,7 +230,7 @@ typedef uint32_t AJ_DebugLevel;
  * compiled into the code (by defining AJ_DEBUG_RESTRICT to be AJ_DEBUG_WARN).
  */
 #ifndef AJ_DEBUG_RESTRICT
-#define AJ_DEBUG_RESTRICT AJ_DEBUG_WARN
+#define AJ_DEBUG_RESTRICT AJ_DEBUG_ALL
 #endif
 
 /**
