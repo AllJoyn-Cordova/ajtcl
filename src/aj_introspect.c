@@ -1596,7 +1596,7 @@ const AJ_Object* AJ_NextObject(AJ_ObjectIterator* iter)
 AJ_InterfaceDescription* AJ_InterfacesCreate()
 {
     char ***array;
-    array = AJ_Malloc(sizeof(char**));
+	array = (char ***)AJ_Malloc(sizeof(char**));
     array[0] = NULL;
     return (AJ_InterfaceDescription *) array;
 }
@@ -1611,7 +1611,7 @@ AJ_InterfaceDescription* AJ_InterfacesAdd(AJ_InterfaceDescription *array, char *
         iter++;
     }
 
-    iter = AJ_Realloc((void *) array, sizeof(char**) * (size + 2));
+	iter = (char ***)AJ_Realloc((void *)array, sizeof(char**) * (size + 2));
     if (!iter)
         return NULL;
 
@@ -1640,11 +1640,11 @@ AJ_Status AJ_InterfacesDelete(AJ_InterfaceDescription *array)
 char ** AJ_InterfaceDescriptionCreate(char *interfaceName)
 {
     char **iface;
-    iface = AJ_Malloc(sizeof(char*) * 2);
+	iface = (char **)AJ_Malloc(sizeof(char*) * 2);
     if (!iface)
         return NULL;
 
-    iface[0] = AJ_Malloc(strlen(interfaceName) + 1);
+	iface[0] = (char *)AJ_Malloc(strlen(interfaceName) + 1);
     if (!iface[0]) {
         AJ_Free(iface);
         return NULL;
@@ -1667,12 +1667,12 @@ char ** AJ_InterfaceDescriptionAdd(char **interfaceDescription, char *descriptio
         size++;
     }
 
-    iter = AJ_Realloc(interfaceDescription, sizeof(char*) * (size + 2));
+	iter = (char **)AJ_Realloc(interfaceDescription, sizeof(char*) * (size + 2));
     if (!iter)
         return NULL;
     interfaceDescription = iter;
 
-    iter[size] = AJ_Malloc(strlen(description) + 1);
+	iter[size] = (char *)AJ_Malloc(strlen(description) + 1);
     if (!iter[size]) {
         return NULL;
     }
@@ -1699,7 +1699,7 @@ AJ_Status AJ_InterfaceDescriptionDelete(char **interfaceDescription)
 AJ_Object* AJ_ObjectsCreate()
 {
     AJ_Object *list, initializer = { NULL };
-    list = AJ_Malloc(sizeof(AJ_Object));
+	list = (AJ_Object*)AJ_Malloc(sizeof(AJ_Object));
     *list = initializer;
     return list;
 }
@@ -1714,7 +1714,7 @@ AJ_Object* AJ_ObjectsAdd(AJ_Object *list, AJ_Object item)
         iter++;
     }
 
-    iter = AJ_Realloc(list, sizeof(AJ_Object) * (size + 2));
+	iter = (AJ_Object*)AJ_Realloc(list, sizeof(AJ_Object) * (size + 2));
     if (!iter)
         return NULL;
 
