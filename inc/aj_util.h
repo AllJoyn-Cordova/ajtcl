@@ -60,6 +60,8 @@ const char* AJ_GetVersion();
 AJ_EXPORT
 uint32_t AJ_GetElapsedTime(AJ_Time* timer, uint8_t cumulative);
 
+#ifndef NDEBUG
+
 /**
  * Gets the time for the debug statement.
  *
@@ -69,6 +71,8 @@ uint32_t AJ_GetElapsedTime(AJ_Time* timer, uint8_t cumulative);
  */
 AJ_EXPORT
 AJ_Status _AJ_GetDebugTime(AJ_Time* timer);
+
+#endif // NDEBUG
 
 /**
  * Initialize a timer
